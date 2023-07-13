@@ -1,0 +1,20 @@
+model:
+  arch: lavi
+
+  # vit encoder
+  max_size_frame: 6
+  max_size_patch: 14
+  size_img: 224
+  vis_backbone_size: 'base'
+  vis_backbone_init: '3d'
+  kinetics: 600
+  vis_hidden_size: 768
+  lavender_model: '/content/LAVENDER_Vicuna/_models/lavender/lavender_scale_up_pretrain.pt'
+
+  # Vicuna
+  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
+
+  # generation configs
+  prompt: ""
+
+
