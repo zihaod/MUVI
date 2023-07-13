@@ -7,9 +7,9 @@
 
 import re
 
-from lavi.common.registry import registry
-from lavi.processors.base_processor import BaseProcessor
-from lavi.processors.randaugment import RandomAugment
+from muvi.common.registry import registry
+from muvi.processors.base_processor import BaseProcessor
+from muvi.processors.randaugment import RandomAugment
 from omegaconf import OmegaConf
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
