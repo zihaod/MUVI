@@ -43,7 +43,7 @@ class MusicCapsDataset(BaseDataset):
         raw_audio = self.ds[idx]['audio']['array']
         audio = self.processor(raw_audio, 
                                      sampling_rate=self.resample_rate, 
-                                     return_tensors="pt")['input_values']
+                                     return_tensors="pt")['input_values'][0]
         txt = [self.ds[idx]['caption']]
 
         return {'audio': audio, 'text_input': txt}
