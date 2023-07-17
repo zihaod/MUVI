@@ -1,5 +1,5 @@
 datasets:
-  webvid:
+  musiccaps:
     #data_type: audios
     #build_info:
     #  storage: /path/to/webvid2.5M/
