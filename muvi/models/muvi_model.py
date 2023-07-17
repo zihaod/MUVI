@@ -97,7 +97,18 @@ class MUVI(BaseModel):
             audio = audio.to("cpu")
 
         #with self.maybe_autocast():
-        audio_embeds = self.audio_encoder(audio)['last_hidden_state'].to(device)
+        audio_embeds = self.audio_encoder(audio)['last_hidden_state']#.to(device)
+        #Average time steps:
+        t = 32
+        B, T, D = audio_embeds.shape
+        avg_tmp = audio_embeds[:, :T//t*t].reshape(B, T//t, t, D).mean(2)
+        #Average the remaining steps
+        if T % t > 0:
+          avg_last = audio_embeds[:, T//t*t:].reshape(B, 1, T%t, D).mean(2)
+          audio_embeds = torch.concat([avg_tmp, avg_last], dim=1)
+        else:
+          audio_embeds = avg_tmp
+        audio_embeds = audio_embeds.to(device)
         inputs_llama = self.llama_proj(audio_embeds)
         atts_llama = torch.ones(inputs_llama.size()[:-1], dtype=torch.long).to(audio.device)
         return inputs_llama, atts_llama
