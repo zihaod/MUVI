@@ -13,7 +13,7 @@ model:
 
 datasets:
   musiccaps:
-    #data_type: audios
+    data_type: audios
     #processor: 'm-a-p/MERT-v1-330M'
     #split: train
     #data_dir: '/content/drive/MyDrive/_pretrain'
