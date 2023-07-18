@@ -48,4 +48,27 @@ class MusicCapsDataset(BaseDataset):
 
         return {'audio': audio, 'text_input': txt}
 
+    def collater(self, samples):
+        audios = [s['audio'] for s in samples]
+        audio_sizes = [len(s['audio']) for s in samples]
+        audio_size = max(audio_sizes)
+        txts = [s['text_input'] for s in samples]
+
+        collated_audios = audios[0].new_zeros(len(audios), audio_size)
+        attn_mask = (
+            torch.BoolTensor(collated_audios.shape).fill_(True)
+        )
+
+        for i, audio in enumerate(audios):
+            diff = len(audio) - audio_size
+            if diff == 0:
+                collated_audios[i] = audio
+            else: #diff < 0
+                collated_audios[i] = torch.cat([audio, audio.new_full((-diff,), 0.0)])
+                attn_mask[i, diff:] = False
+
+        attn_mask = attn_mask.int()
+
+        return {'audio': collated_audios, 'text_input': txts, 'attention_mask': attn_mask}
+
     
