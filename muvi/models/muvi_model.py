@@ -90,14 +90,17 @@ class MUVI(BaseModel):
         self.audio_encoder.to("cpu")
         self.audio_encoder.float()
 
-    def encode_audio(self, audio):
+    def encode_audio(self, audio, attn=None):
         device = audio.device
         if self.low_resource:
             self.audioenc_to_cpu()
             audio = audio.to("cpu")
 
         #with self.maybe_autocast():
-        audio_embeds = self.audio_encoder(audio)['last_hidden_state']#.to(device)
+        if not attn:
+            audio_embeds = self.audio_encoder(input_values=audio)['last_hidden_state']#.to(device)
+        else:
+            audio_embeds = self.audio_encoder(input_values=audio, attention_mask=attn)['last_hidden_state']
         #Average time steps:
         t = 32
         B, T, D = audio_embeds.shape
@@ -131,7 +134,8 @@ class MUVI(BaseModel):
 
     def forward(self, samples):
         audio = samples["audio"]
-        audio_embeds, atts_audio = self.encode_audio(audio)
+        attn = samples["attention_mask"] if "attention_mask" in samples else None
+        audio_embeds, atts_audio = self.encode_audio(audio, attn)
         if hasattr(samples, 'question_split'):  # VQA dataset
             print('QA Batch')
             vqa_prompt = '###Human: <Audio><AudioHere></Audio> '
