@@ -4,7 +4,7 @@ from muvi.datasets.datasets.audio_utils import download_clip
 
 from datasets import load_dataset, Audio
 import os
-
+import torch
 
 class MusicCapsDataset(BaseDataset):
     def __init__(self, processor, data_dir, split):
@@ -40,7 +40,11 @@ class MusicCapsDataset(BaseDataset):
         return len(self.ds)
 
     def __getitem__(self, idx):
-        raw_audio = self.ds[idx]['audio']['array']
+        try:
+            raw_audio = self.ds[idx]['audio']['array']
+        except:
+            print("missing data point")
+            return None
         audio = self.processor(raw_audio, 
                                      sampling_rate=self.resample_rate, 
                                      return_tensors="pt")['input_values'][0]
@@ -49,10 +53,11 @@ class MusicCapsDataset(BaseDataset):
         return {'audio': audio, 'text_input': txt}
 
     def collater(self, samples):
+        samples = [s for s in samples if s]
         audios = [s['audio'] for s in samples]
         audio_sizes = [len(s['audio']) for s in samples]
         audio_size = max(audio_sizes)
-        txts = [s['text_input'] for s in samples]
+        txts = [" ".join(s['text_input']) for s in samples]
 
         collated_audios = audios[0].new_zeros(len(audios), audio_size)
         attn_mask = (
