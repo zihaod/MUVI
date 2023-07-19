@@ -97,7 +97,7 @@ class MUVI(BaseModel):
             audio = audio.to("cpu")
 
         #with self.maybe_autocast():
-        if not attn is None:
+        if attn is None:
             audio_embeds = self.audio_encoder(input_values=audio)['last_hidden_state']#.to(device)
         else:
             audio_embeds = self.audio_encoder(input_values=audio, attention_mask=attn)['last_hidden_state']
