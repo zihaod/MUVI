@@ -5,4 +5,4 @@ datasets:
     #  storage: /path/to/webvid2.5M/
     processor: 'm-a-p/MERT-v1-330M'
     split: train
-    data_dir: '/content/drive/MyDrive/music_data/MusicCaps'
+    data_dir: '/content/drive/MyDrive/music_data'
