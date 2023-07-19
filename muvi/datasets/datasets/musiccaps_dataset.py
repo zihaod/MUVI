@@ -24,7 +24,8 @@ class MusicCapsDataset(BaseDataset):
         return len(self.ann)
 
     def __getitem__(self, idx):
-        npy_path = os.path.join(data_dir, 'MusicCaps_audio', f'{self.ann[idx]['ytid']}.npy')
+        ytid = self.ann[idx]['ytid']
+        npy_path = os.path.join(self.data_dir, 'MusicCaps_audio', f'{ytid}.npy')
         raw_audio = np.load(npy_path)
         audio = self.processor(raw_audio, 
                                sampling_rate=self.resample_rate, 
