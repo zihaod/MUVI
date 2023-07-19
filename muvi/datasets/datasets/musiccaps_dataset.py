@@ -5,8 +5,59 @@ from muvi.datasets.datasets.audio_utils import download_clip
 from datasets import load_dataset, Audio
 import os
 import torch
+import numpy as np
+import json
 
 class MusicCapsDataset(BaseDataset):
+    def __init__(self, processor, data_dir, split):
+        super().__init__()
+        self.split = split
+        self.data_dir = data_dir #music_data
+        self.resample_rate = processor.sampling_rate
+        self.processor = processor
+        
+        with open(os.path.join(data_dir, 'MusicCaps_ann', f'{split}.json'), 'r') as f:
+            self.ann = json.load(f)
+        self.ann = self.ann['ann']
+
+    def __len__(self):
+        return len(self.ann)
+
+    def __getitem__(self, idx):
+        npy_path = os.path.join(data_dir, 'MusicCaps_audio', f'{self.ann[idx]['ytid']}.npy')
+        raw_audio = np.load(npy_path)
+        audio = self.processor(raw_audio, 
+                               sampling_rate=self.resample_rate, 
+                               return_tensors="pt")['input_values'][0]
+        txt = [self.ann[idx]['caption']]
+
+        return {'audio': audio, 'text_input': txt}
+
+    def collater(self, samples):
+        #padding to max length in a batch
+        audios = [s['audio'] for s in samples]
+        audio_sizes = [len(s['audio']) for s in samples]
+        audio_size = max(audio_sizes)
+        txts = [" ".join(s['text_input']) for s in samples]
+
+        collated_audios = audios[0].new_zeros(len(audios), audio_size)
+        attn_mask = (
+            torch.BoolTensor(collated_audios.shape).fill_(True)
+        )
+
+        for i, audio in enumerate(audios):
+            diff = len(audio) - audio_size
+            if diff == 0:
+                collated_audios[i] = audio
+            else: #diff < 0
+                collated_audios[i] = torch.cat([audio, audio.new_full((-diff,), 0.0)])
+                attn_mask[i, diff:] = False
+
+        attn_mask = attn_mask.int()
+
+        return {'audio': collated_audios, 'text_input': txts, 'attention_mask': attn_mask}
+
+class MusicCapsDatasetWithExtract(BaseDataset):
     def __init__(self, processor, data_dir, split):
         super().__init__()
         self.split = split
