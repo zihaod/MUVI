@@ -9,6 +9,7 @@ notebook
 wandb
 fairscale
 nnAudio
+torch==2.0.1
 accelerate==0.16.0
 aiohttp==3.8.4
 aiosignal==1.3.1
