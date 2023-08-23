@@ -50,28 +50,28 @@ class MUVI(BaseModel):
         print('Loading Audio Encoder Done')
 
         print('Loading LLAMA')
-        self.llama_tokenizer = LlamaTokenizer.from_pretrained(llama_model, use_fast=False)
-        self.llama_tokenizer.pad_token = self.llama_tokenizer.eos_token
+        # self.llama_tokenizer = LlamaTokenizer.from_pretrained(llama_model, use_fast=False)
+        # self.llama_tokenizer.pad_token = self.llama_tokenizer.eos_token
 
-        if self.low_resource:
-            self.llama_model = LlamaForCausalLM.from_pretrained(
-                llama_model,
-                torch_dtype=torch.float16,
-                load_in_8bit=True,
-                device_map={'': device_8bit}
-            )
-        else:
-            self.llama_model = LlamaForCausalLM.from_pretrained(
-                llama_model,
-                torch_dtype=torch.float16,
-            )
+        # if self.low_resource:
+        #     self.llama_model = LlamaForCausalLM.from_pretrained(
+        #         llama_model,
+        #         torch_dtype=torch.float16,
+        #         load_in_8bit=True,
+        #         device_map={'': device_8bit}
+        #     )
+        # else:
+        #     self.llama_model = LlamaForCausalLM.from_pretrained(
+        #         llama_model,
+        #         torch_dtype=torch.float16,
+        #     )
 
-        for name, param in self.llama_model.named_parameters():
-            param.requires_grad = False
-        print('Loading LLAMA Done')
+        # for name, param in self.llama_model.named_parameters():
+        #     param.requires_grad = False
+        # print('Loading LLAMA Done')
 
         self.llama_proj = nn.Linear(
-            self.audio_encoder.config.hidden_size, self.llama_model.config.hidden_size
+            self.audio_encoder.config.hidden_size, 4096
         )
         self.max_txt_len = max_txt_len
         self.end_sym = end_sym
