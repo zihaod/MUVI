@@ -8,3 +8,5 @@ muvi/tasks/__pycache__/
 muvi/datasets/__pycache__/
 muvi/datasets/datasets/__pycache__/
 muvi/datasets/builders/__pycache__/
+
+*.pth
