@@ -1,4 +1,4 @@
-ddatasets:
+datasets:
   musicqa:
     processor: 'm-a-p/MERT-v1-330M'
     split: musicqa_pretraing
