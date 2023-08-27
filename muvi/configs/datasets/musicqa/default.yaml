@@ -1,0 +1,5 @@
+ddatasets:
+  musiccaps:
+    processor: 'm-a-p/MERT-v1-330M'
+    split: musicqa_pretraing
+    data_dir: 'music_data/'
