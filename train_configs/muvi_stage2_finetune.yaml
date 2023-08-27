@@ -8,6 +8,7 @@ model:
 
 datasets:
   musicqa:
+    data_type: audios
 
 
 
