@@ -11,23 +11,29 @@ import json
 class MusicQADataset(BaseDataset):
     def __init__(self, processor, data_dir, split):
         super().__init__()
-        self.split = split # split is in {musiccaps_pretraining, mtt_finetuning, mtg_evaluation}
-        self.data_dir = data_dir #music_data
-        self.resample_rate = processor.sampling_rate
+        self.split = split
+        self.data_dir = os.path.join(data_dir, 'MusicQA', 'musicqa_'+split) # split is in {musiccaps_pretraining, mtt_finetuning, mtg_evaluation}
+        self.resample_rate = processor.sampling_rate #music_data
         self.processor = processor
+        self.subset = split.split('_')[0]
         
-        data_path = os.path.join(data_dir, 'MusicQA', f'musicqa_{split}')
-        self.ds = load_from_disk(data_path)
+        with open(os.path.join(data_dir, self.subset+'_ann', 'train.json'), 'r') as f:
+            self.ann = json.load(f)
+        self.ann = self.ann['ann']
 
     def __len__(self):
-        return len(self.ds)
+        return len(self.ann)
 
     def __getitem__(self, idx):
-        item = self.ds[idx]
-        audio = torch.from_numpy(item['Music']['array'])
-        instruction = [item['Question']]
-        txt = [item['Answer']]
-
+        id = self.ann[idx]['Music']['path']
+        npy_path = os.path.join(self.data_dir, self.subset+'_audio', f'{id}.npy')
+        raw_audio = np.load(npy_path)
+        audio = self.processor(raw_audio, 
+                               sampling_rate=self.resample_rate, 
+                               return_tensors="pt")['input_values'][0]
+        instruction = txt = [self.ann[idx]['Question']]
+        txt = [self.ann[idx]['Answer']]
+        
         return {'audio': audio, 'text_input': txt, 'instruction_input': instruction}
 
     def collater(self, samples):
