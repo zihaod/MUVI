@@ -24,7 +24,7 @@ class MusicQADataset(BaseDataset):
 
     def __getitem__(self, idx):
         item = self.ds[idx]
-        audio = item['Music']['array']
+        audio = torch.from_numpy(item['Music']['array'])
         instruction = [item['Question']]
         txt = [item['Answer']]
 
