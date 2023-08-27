@@ -76,6 +76,8 @@ class MUVI(BaseModel):
         self.max_txt_len = max_txt_len
         self.end_sym = end_sym
 
+        self.prompt_template = prompt_template
+
         if prompt_path:
             with open(prompt_path, 'r') as f:
                 raw_prompts = f.read().splitlines()
@@ -136,9 +138,10 @@ class MUVI(BaseModel):
         audio = samples["audio"]
         attn = samples["attention_mask"] if "attention_mask" in samples else None
         audio_embeds, atts_audio = self.encode_audio(audio, attn)
-        if hasattr(samples, 'question_split'):  # VQA dataset
-            print('QA Batch')
-            vqa_prompt = '###Human: <Audio><AudioHere></Audio> '
+        if hasattr(samples, 'instruction_input'):  # instruction dataset
+            print('Instruction Batch')
+            prompt = '<Audio><AudioHere></Audio> ' + samples['instruction_input']
+            vqa_prompt = self.prompt_template.format(prompt)
             audio_embeds, atts_audio = self.prompt_wrap(audio_embeds, atts_audio, vqa_prompt)
         elif self.prompt_list:
             prompt = random.choice(self.prompt_list)
