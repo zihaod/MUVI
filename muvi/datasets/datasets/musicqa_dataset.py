@@ -25,7 +25,7 @@ class MusicQADataset(BaseDataset):
         return len(self.ann)
 
     def __getitem__(self, idx):
-        id = self.ann[idx]['Music']['path']
+        id = self.ann[idx]['Music']['path'][:-4]
         npy_path = os.path.join(self.data_dir, self.subset+'_audio', f'{id}.npy')
         raw_audio = np.load(npy_path)
         audio = self.processor(raw_audio, 
