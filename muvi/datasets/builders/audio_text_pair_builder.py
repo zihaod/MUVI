@@ -7,6 +7,7 @@ from transformers import Wav2Vec2FeatureExtractor
 from muvi.common.registry import registry
 from muvi.datasets.builders.base_dataset_builder import BaseDatasetBuilder
 from muvi.datasets.datasets.musiccaps_dataset import MusicCapsDataset
+from muvi.datasets.datasets.musicqa_dataset import MusicQADataset
 
 
 @registry.register_builder("musiccaps")
