@@ -17,7 +17,7 @@ class MusicQADataset(BaseDataset):
         self.processor = processor
         self.subset = split.split('_')[0]
         
-        with open(os.path.join(data_dir, self.subset+'_ann', 'train.json'), 'r') as f:
+        with open(os.path.join(self.data_dir, self.subset+'_ann', 'train.json'), 'r') as f:
             self.ann = json.load(f)
         self.ann = self.ann['ann']
 
