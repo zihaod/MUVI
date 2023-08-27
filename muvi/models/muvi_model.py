@@ -133,6 +133,30 @@ class MUVI(BaseModel):
             return wrapped_audio_embeds, wrapped_atts_audio
         else:
             return audio_embeds, atts_audio
+        
+    def instruction_prompt_wrap(self, audio_embeds, atts_audio, prompt):
+        if prompt:
+            batch_size = audio_embeds.shape[0]
+            p_before = []
+            p_after = []
+
+            for i in range(batch_size):
+                p_b, p_a = prompt[i].split('<AudioHere>')
+                p_before.append(p_b)
+                p_after.append(p_a)
+
+            p_before_tokens = self.llama_tokenizer(
+                p_before, return_tensors="pt", padding='longest', add_special_tokens=False).to(audio_embeds.device)
+            p_after_tokens = self.llama_tokenizer(
+                p_after, return_tensors="pt", padding='longest', add_special_tokens=False).to(audio_embeds.device)
+            p_before_embeds = self.llama_model.model.embed_tokens(p_before_tokens.input_ids)
+            p_after_embeds = self.llama_model.model.embed_tokens(p_after_tokens.input_ids)
+            wrapped_audio_embeds = torch.cat([p_before_embeds, audio_embeds, p_after_embeds], dim=1)
+            wrapped_atts_audio = torch.cat([p_before_tokens.attention_mask, atts_audio, p_after_tokens.attention_mask], dim=1)
+            return wrapped_audio_embeds, wrapped_atts_audio
+        else:
+            return audio_embeds, atts_audio
+        
 
     def forward(self, samples):
         audio = samples["audio"]
@@ -141,8 +165,8 @@ class MUVI(BaseModel):
         if hasattr(samples, 'instruction_input'):  # instruction dataset
             print('Instruction Batch')
             prompt = '<Audio><AudioHere></Audio> ' + samples['instruction_input']
-            vqa_prompt = self.prompt_template.format(prompt)
-            audio_embeds, atts_audio = self.prompt_wrap(audio_embeds, atts_audio, vqa_prompt)
+            instruction_prompt = self.prompt_template.format(prompt)
+            audio_embeds, atts_audio = self.instruction_prompt_wrap(audio_embeds, atts_audio, instruction_prompt)
         elif self.prompt_list:
             prompt = random.choice(self.prompt_list)
             audio_embeds, atts_audio = self.prompt_wrap(audio_embeds, atts_audio, prompt)
