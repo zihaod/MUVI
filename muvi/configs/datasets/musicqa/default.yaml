@@ -1,5 +1,5 @@
 ddatasets:
-  musiccaps:
+  musicqa:
     processor: 'm-a-p/MERT-v1-330M'
     split: musicqa_pretraing
     data_dir: '/content/drive/MyDrive/music_data/'
