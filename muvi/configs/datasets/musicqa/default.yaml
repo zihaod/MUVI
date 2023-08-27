@@ -1,5 +1,5 @@
 datasets:
   musicqa:
     processor: 'm-a-p/MERT-v1-330M'
-    split: musicqa_pretraing
+    split: musiccaps_pretraing
     data_dir: '/content/drive/MyDrive/music_data/'
