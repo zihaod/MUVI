@@ -7,6 +7,7 @@ import os
 import torch
 import numpy as np
 import json
+import torchaudio.transforms as T
 
 class MusicQADataset(BaseDataset):
     def __init__(self, processor, data_dir, split):
@@ -26,9 +27,15 @@ class MusicQADataset(BaseDataset):
 
     def __getitem__(self, idx):
         id = self.ann[idx]['Music']['path'][:-4]
+        sampling_rate = self.ann[idx]['Music']['sampling_rate']
+ 
         npy_path = os.path.join(self.data_dir, self.subset+'_audio', f'{id}.npy')
-        raw_audio = np.load(npy_path)
-        audio = self.processor(raw_audio, 
+        audio_array = np.load(npy_path)
+
+        resampler = T.Resample(sampling_rate, self.resample_rate)
+        audio_input = resampler(torch.from_numpy(audio_array).float())
+
+        audio = self.processor(audio_input, 
                                sampling_rate=self.resample_rate, 
                                return_tensors="pt")['input_values'][0]
         instruction = txt = [self.ann[idx]['Question']]
@@ -60,3 +67,4 @@ class MusicQADataset(BaseDataset):
         attn_mask = attn_mask.int()
 
         return {'audio': collated_audios, 'text_input': txts, 'instruction_input': instructions, 'attention_mask': attn_mask}
+
