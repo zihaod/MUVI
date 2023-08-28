@@ -168,7 +168,6 @@ class MUVI(BaseModel):
         
 
     def forward(self, samples):
-        print(samples)
         audio = samples["audio"]
         attn = samples["attention_mask"] if "attention_mask" in samples else None
         audio_embeds, atts_audio = self.encode_audio(audio, attn)
