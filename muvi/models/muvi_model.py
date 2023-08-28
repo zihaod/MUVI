@@ -100,7 +100,9 @@ class MUVI(BaseModel):
 
         #with self.maybe_autocast():
         if attn is None:
-            audio_embeds = self.audio_encoder(input_values=audio)['last_hidden_state']#.to(device)
+            #audio_embeds = self.audio_encoder(input_values=audio)['last_hidden_state']#.to(device)
+            audio_embeds = torch.stack(self.audio_encoder(input_values=audio).hidden_states) # [B, 25, T, 1024]
+            audio_embeds = audio_embeds.mean(-3) #[B, T, 1024]
         else:
             #audio_embeds = self.audio_encoder(input_values=audio, attention_mask=attn)['last_hidden_state']
             audio_embeds = torch.stack(self.audio_encoder(input_values=audio, attention_mask=attn).hidden_states) # [B, 25, T, 1024]
