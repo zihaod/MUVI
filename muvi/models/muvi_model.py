@@ -102,9 +102,12 @@ class MUVI(BaseModel):
         if attn is None:
             audio_embeds = self.audio_encoder(input_values=audio)['last_hidden_state']#.to(device)
         else:
-            audio_embeds = self.audio_encoder(input_values=audio, attention_mask=attn)['last_hidden_state']
+            #audio_embeds = self.audio_encoder(input_values=audio, attention_mask=attn)['last_hidden_state']
+            audio_embeds = torch.stack(self.audio_encoder(input_values=audio, attention_mask=attn).hidden_states) # [B, 25, T, 1024]
+            audio_embeds = audio_embeds.mean(-3) #[B, T, 1024]
+            
         #Average time steps:
-        t = 32
+        t = 325
         B, T, D = audio_embeds.shape
         avg_tmp = audio_embeds[:, :T//t*t].reshape(B, T//t, t, D).mean(2)
         #Average the remaining steps
