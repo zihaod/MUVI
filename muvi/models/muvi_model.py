@@ -153,7 +153,7 @@ class MUVI(BaseModel):
                 p_b, p_a = prompt[i].split('<AudioHere>')
                 p_before.append(p_b)
                 p_after.append(p_a)
-
+  
             p_before_tokens = self.llama_tokenizer(
                 p_before, return_tensors="pt", padding='longest', add_special_tokens=False).to(audio_embeds.device)
             p_after_tokens = self.llama_tokenizer(
@@ -168,13 +168,16 @@ class MUVI(BaseModel):
         
 
     def forward(self, samples):
+        print(samples)
         audio = samples["audio"]
         attn = samples["attention_mask"] if "attention_mask" in samples else None
         audio_embeds, atts_audio = self.encode_audio(audio, attn)
-        if hasattr(samples, 'instruction_input'):  # instruction dataset
+        if 'instruction_input' in samples:  # instruction dataset
             print('Instruction Batch')
-            prompt = '<Audio><AudioHere></Audio> ' + samples['instruction_input']
-            instruction_prompt = self.prompt_template.format(prompt)
+            instruction_prompt = []
+            for instruction in samples['instruction_input']:
+                prompt = '<Audio><AudioHere></Audio> ' + instruction
+                instruction_prompt.append(self.prompt_template.format(prompt))
             audio_embeds, atts_audio = self.instruction_prompt_wrap(audio_embeds, atts_audio, instruction_prompt)
         elif self.prompt_list:
             prompt = random.choice(self.prompt_list)
