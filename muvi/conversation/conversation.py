@@ -192,7 +192,7 @@ class Chat:
 
             audio = self.processor(audio_input, 
                                    sampling_rate=resample_rate, 
-                                   return_tensors="pt")['input_values'][0].unsqueeze(0).to(self.device)
+                                   return_tensors="pt")['input_values'][0].to(self.device)
             #raw_image = image
             #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
         elif isinstance(audio, torch.Tensor):
