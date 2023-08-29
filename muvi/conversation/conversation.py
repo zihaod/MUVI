@@ -10,7 +10,7 @@ import dataclasses
 from enum import auto, Enum
 from typing import List, Tuple, Any
 
-from minigpt4.common.registry import registry
+from muvi.common.registry import registry
 
 
 class SeparatorStyle(Enum):
@@ -106,6 +106,16 @@ class StoppingCriteriaSub(StoppingCriteria):
         return False
 
 
+CONV_MUSIC = Conversation(
+    system="Give the following music: <Audio>AudioContent</Audio>. "
+           "You will be able to see the music once I provide it to you. Please answer my questions.",
+    roles=("Human", "Assistant"),
+    messages=[],
+    offset=2,
+    sep_style=SeparatorStyle.SINGLE,
+    sep="###",
+)
+
 CONV_VISION = Conversation(
     system="Give the following image: <Img>ImageContent</Img>. "
            "You will be able to see the image once I provide it to you. Please answer my questions.",
@@ -119,25 +129,25 @@ CONV_VISION = Conversation(
 
 
 class Chat:
-    def __init__(self, model, vis_processor, device='cuda:0'):
+    def __init__(self, model, processor, device='cuda:0'):
         self.device = device
         self.model = model
-        self.vis_processor = vis_processor
+        self.processor = processor
         stop_words_ids = [torch.tensor([835]).to(self.device),
                           torch.tensor([2277, 29937]).to(self.device)]  # '###' can be encoded in two different ways.
         self.stopping_criteria = StoppingCriteriaList([StoppingCriteriaSub(stops=stop_words_ids)])
 
     def ask(self, text, conv):
         if len(conv.messages) > 0 and conv.messages[-1][0] == conv.roles[0] \
-                and conv.messages[-1][1][-6:] == '</Img>':  # last message is image.
+                and conv.messages[-1][1][-6:] == '</Audio>':  # last message is Audio.
             conv.messages[-1][1] = ' '.join([conv.messages[-1][1], text])
         else:
             conv.append_message(conv.roles[0], text)
 
-    def answer(self, conv, img_list, max_new_tokens=300, num_beams=1, min_length=1, top_p=0.9,
+    def answer(self, conv, audio_list, max_new_tokens=300, num_beams=1, min_length=1, top_p=0.9,
                repetition_penalty=1.0, length_penalty=1, temperature=1.0, max_length=2000):
         conv.append_message(conv.roles[1], None)
-        embs = self.get_context_emb(conv, img_list)
+        embs = self.get_context_emb(conv, audio_list)
 
         current_max_len = embs.shape[1] + max_new_tokens
         if current_max_len - max_length > 0:
@@ -170,29 +180,29 @@ class Chat:
         conv.messages[-1][1] = output_text
         return output_text, output_token.cpu().numpy()
 
-    def upload_img(self, image, conv, img_list):
-        if isinstance(image, str):  # is a image path
-            raw_image = Image.open(image).convert('RGB')
-            image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
-        elif isinstance(image, Image.Image):
-            raw_image = image
-            image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
-        elif isinstance(image, torch.Tensor):
-            if len(image.shape) == 3:
-                image = image.unsqueeze(0)
-            image = image.to(self.device)
+    def upload_audio(self, audio, conv, img_list):
+        if isinstance(audio, str):  # is a image path
+            #raw_image = Image.open(image).convert('RGB')
+            #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
+        elif isinstance(audio, Image.Image):
+            #raw_image = image
+            #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
+        elif isinstance(audio, torch.Tensor):
+            #if len(image.shape) == 3:
+            #    image = image.unsqueeze(0)
+            #image = image.to(self.device)
 
-        image_emb, _ = self.model.encode_img(image)
-        img_list.append(image_emb)
-        conv.append_message(conv.roles[0], "<Img><ImageHere></Img>")
+        audio_emb, _ = self.model.encode_audio(audio)
+        audio_list.append(audio_emb)
+        conv.append_message(conv.roles[0], "<Audio><AudioHere></Audio>")
         msg = "Received."
         # self.conv.append_message(self.conv.roles[1], msg)
         return msg
 
-    def get_context_emb(self, conv, img_list):
+    def get_context_emb(self, conv, audio_list):
         prompt = conv.get_prompt()
-        prompt_segs = prompt.split('<ImageHere>')
-        assert len(prompt_segs) == len(img_list) + 1, "Unmatched numbers of image placeholders and images."
+        prompt_segs = prompt.split('<AudioHere>')
+        assert len(prompt_segs) == len(audio_list) + 1, "Unmatched numbers of audio placeholders and audios."
         seg_tokens = [
             self.model.llama_tokenizer(
                 seg, return_tensors="pt", add_special_tokens=i == 0).to(self.device).input_ids
