@@ -114,7 +114,7 @@ def gradio_answer(chatbot, chat_state, audio_list, num_beams, temperature):
 
 
 title = """<h1 align="center">Demo of MUVI</h1>"""
-description = """<h3>This is the demo of MUVI. Upload your images and start chatting!</h3>"""
+description = """<h3>This is the demo of MUVI. Upload your musics and start chatting!</h3>"""
 #article = """<p><a href='https://minigpt-4.github.io'><img src='https://img.shields.io/badge/Project-Page-Green'></a></p><p><a href='https://github.com/Vision-CAIR/MiniGPT-4'><img src='https://img.shields.io/badge/Github-Code-blue'></a></p><p><a href='https://raw.githubusercontent.com/Vision-CAIR/MiniGPT-4/main/MiniGPT_4.pdf'><img src='https://img.shields.io/badge/Paper-PDF-red'></a></p>
 #"""
 
@@ -123,7 +123,7 @@ description = """<h3>This is the demo of MUVI. Upload your images and start chat
 with gr.Blocks() as demo:
     gr.Markdown(title)
     gr.Markdown(description)
-    gr.Markdown(article)
+    #gr.Markdown(article)
 
     with gr.Row():
         with gr.Column(scale=0.5):
