@@ -65,7 +65,9 @@ CONV_MUSIC = conv_dict[model_config.model_type]
 
 #vis_processor_cfg = cfg.datasets_cfg.cc_sbu_align.vis_processor.train
 #vis_processor = registry.get_processor_class(vis_processor_cfg.name).from_config(vis_processor_cfg)
-chat = Chat(model, processor, device='cuda:{}'.format(args.gpu_id))
+audio_processor_name = cfg.datasets_cfg.musicqa.processor
+audio_processor = Wav2Vec2FeatureExtractor.from_pretrained(audio_processor_name, trust_remote_code=True)
+chat = Chat(model, audio_processor, device='cuda:{}'.format(args.gpu_id))
 print('Initialization Finished')
 
 
@@ -124,8 +126,7 @@ with gr.Blocks() as demo:
 
     with gr.Row():
         with gr.Column(scale=0.5):
-            #image = gr.Image(type="pil")
-            audio = gr.Audio(type="filepath")
+            audio = gr.Audio(type="numpy") # or type="filepath"
             upload_button = gr.Button(value="Upload & Start Chat", interactive=True, variant="primary")
             clear = gr.Button("Restart")
             
