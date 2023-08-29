@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 import gradio as gr
+from transformers import Wav2Vec2FeatureExtractor
 
 from muvi.common.config import Config
 from muvi.common.dist_utils import get_rank
@@ -50,7 +51,7 @@ def setup_seeds(config):
 #             Model Initialization
 # ========================================
 
-conv_dict = {'pretrain_vicuna0': CONV_MUSIC}
+conv_dict = {'pretrain_vicuna': CONV_MUSIC}
 
 print('Initializing Chat')
 args = parse_args()
