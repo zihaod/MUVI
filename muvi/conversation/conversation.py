@@ -181,7 +181,7 @@ class Chat:
         conv.messages[-1][1] = output_text
         return output_text, output_token.cpu().numpy()
 
-    def upload_audio(self, audio, conv, img_list):
+    def upload_audio(self, audio, conv, audio_list):
         if isinstance(audio, str):  # is an audio path
             raise Exception('Upload type not implemented')
         elif isinstance(audio, tuple): # is a tuple (sampling_rate, numpy_array)
