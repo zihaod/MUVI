@@ -1,10 +1,12 @@
 model:
   arch: muvi
   model_type: pretrain_vicuna
-  prompt_template: '###Human: {} ###Assistant: '
+  mert_model: 'm-a-p/MERT-v1-330M'
+  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
   ckpt: '/content/checkpoint_3.pth'
-  max_txt_len: 160
+  prompt_template: '###Human: {} ###Assistant: '
   end_sym: "###"
+  max_txt_len: 160
 
 
 
