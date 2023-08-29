@@ -1,1 +1,18 @@
+model:
+  arch: muvi
+  model_type: pretrain_vicuna
+  prompt_template: '###Human: {} ###Assistant: '
+  ckpt: '/content/checkpoint_3.pth'
+  max_txt_len: 160
+  end_sym: "###"
 
+
+
+datasets:
+  musicqa:
+    data_type: audios
+
+
+
+run:
+  task: audio_text_pretrain
