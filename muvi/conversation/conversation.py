@@ -11,6 +11,7 @@ from enum import auto, Enum
 from typing import List, Tuple, Any
 
 from muvi.common.registry import registry
+import torchaudio.transforms as T
 
 
 class SeparatorStyle(Enum):
@@ -181,16 +182,21 @@ class Chat:
         return output_text, output_token.cpu().numpy()
 
     def upload_audio(self, audio, conv, img_list):
-        if isinstance(audio, str):  # is a image path
-            #raw_image = Image.open(image).convert('RGB')
-            #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
-        elif isinstance(audio, Image.Image):
+        if isinstance(audio, str):  # is an audio path
+            raise Exception('Upload type not implemented')
+        elif isinstance(audio, tuple): # is a tuple (sampling_rate, numpy_array)
+            sampling_rate, audio_array = audio
+            resample_rate = self.processor.sampling_rate
+            resampler = T.Resample(sampling_rate, resample_rate)
+            audio_input = resampler(torch.from_numpy(audio_array).float())
+
+            audio = self.processor(audio_input, 
+                                   sampling_rate=resample_rate, 
+                                   return_tensors="pt")['input_values'][0].unsqueeze(0).to(self.device)
             #raw_image = image
             #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
         elif isinstance(audio, torch.Tensor):
-            #if len(image.shape) == 3:
-            #    image = image.unsqueeze(0)
-            #image = image.to(self.device)
+            raise Exception('Upload type not implemented')
 
         audio_emb, _ = self.model.encode_audio(audio)
         audio_list.append(audio_emb)
