@@ -7,6 +7,7 @@ import os
 import torch
 import numpy as np
 import json
+import torchaudio.transforms as T
 
 class MusicCapsDataset(BaseDataset):
     def __init__(self, processor, data_dir, split):
@@ -25,9 +26,14 @@ class MusicCapsDataset(BaseDataset):
 
     def __getitem__(self, idx):
         ytid = self.ann[idx]['ytid']
+        sampling_rate = self.ann[idx]['audio']['sampling_rate']
         npy_path = os.path.join(self.data_dir, 'MusicCaps_audio', f'{ytid}.npy')
         raw_audio = np.load(npy_path)
-        audio = self.processor(raw_audio, 
+        
+        resampler = T.Resample(sampling_rate, self.resample_rate)
+        audio_input = resampler(torch.from_numpy(raw_audio).float())
+        
+        audio = self.processor(audio_input, 
                                sampling_rate=self.resample_rate, 
                                return_tensors="pt")['input_values'][0]
         txt = [self.ann[idx]['caption']]
