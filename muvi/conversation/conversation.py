@@ -5,13 +5,14 @@ from PIL import Image
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, LlamaTokenizer
 from transformers import StoppingCriteria, StoppingCriteriaList
+import torchaudio.transforms as T
+import numpy as np
 
 import dataclasses
 from enum import auto, Enum
 from typing import List, Tuple, Any
 
 from muvi.common.registry import registry
-import torchaudio.transforms as T
 
 
 class SeparatorStyle(Enum):
@@ -186,15 +187,16 @@ class Chat:
             raise Exception('Upload type not implemented')
         elif isinstance(audio, tuple): # is a tuple (sampling_rate, numpy_array)
             sampling_rate, audio_array = audio
+            audio_array = np.mean(audio_array, axis=1)
+
             resample_rate = self.processor.sampling_rate
             resampler = T.Resample(sampling_rate, resample_rate)
             audio_input = resampler(torch.from_numpy(audio_array).float())
 
             audio = self.processor(audio_input, 
                                    sampling_rate=resample_rate, 
-                                   return_tensors="pt")['input_values'][0].to(self.device)
-            #raw_image = image
-            #image = self.vis_processor(raw_image).unsqueeze(0).to(self.device)
+                                   return_tensors="pt")['input_values'][0].unsqueeze(0).to(self.device)
+            
         elif isinstance(audio, torch.Tensor):
             raise Exception('Upload type not implemented')
 
