@@ -1,22 +1,13 @@
 model:
   arch: muvi
   model_type: pretrain_vicuna
-  # audio encoder
-  #mert_model: 'm-a-p/MERT-v1-330M'
 
-  # Vicuna
-  #llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
-
-  # generation configs
-  #prompt: ""
 
 
 datasets:
-  musiccaps:
+  msd:
     data_type: audios
-    #processor: 'm-a-p/MERT-v1-330M'
-    #split: train
-    #data_dir: '/content/drive/MyDrive/_pretrain'
+
 
 
 
@@ -30,9 +21,9 @@ run:
 
   weight_decay: 0.05
   max_epoch: 4
-  batch_size_train: 1 #64
-  batch_size_eval: 1 #64
-  num_workers: 1 #4 (> 1 currently throws error)
+  batch_size_train: 8
+  batch_size_eval: 8
+  num_workers: 4
   warmup_steps: 5000
   iters_per_epoch: 5000
 
@@ -42,7 +33,7 @@ run:
   amp: True
   resume_ckpt_path: null
 
-  evaluate: False 
+  evaluate: False
   train_splits: ["train"]
 
   device: "cuda"
