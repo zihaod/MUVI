@@ -64,8 +64,6 @@ model = model_cls.from_config(model_config).to('cuda:{}'.format(args.gpu_id))
 
 CONV_MUSIC = conv_dict[model_config.model_type]
 
-#vis_processor_cfg = cfg.datasets_cfg.cc_sbu_align.vis_processor.train
-#vis_processor = registry.get_processor_class(vis_processor_cfg.name).from_config(vis_processor_cfg)
 audio_processor_name = cfg.datasets_cfg.musicqa.processor
 audio_processor = Wav2Vec2FeatureExtractor.from_pretrained(audio_processor_name, trust_remote_code=True)
 chat = Chat(model, audio_processor, device='cuda:{}'.format(args.gpu_id))
@@ -117,8 +115,6 @@ title = """<h1 align="center">Demo of MUVI</h1>"""
 description = """<h3>This is the demo of MUVI. Upload your musics and start chatting!</h3>"""
 #article = """<p><a href='https://minigpt-4.github.io'><img src='https://img.shields.io/badge/Project-Page-Green'></a></p><p><a href='https://github.com/Vision-CAIR/MiniGPT-4'><img src='https://img.shields.io/badge/Github-Code-blue'></a></p><p><a href='https://raw.githubusercontent.com/Vision-CAIR/MiniGPT-4/main/MiniGPT_4.pdf'><img src='https://img.shields.io/badge/Paper-PDF-red'></a></p>
 #"""
-
-#TODO show examples below
 
 with gr.Blocks() as demo:
     gr.Markdown(title)
