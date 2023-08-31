@@ -7,13 +7,14 @@
 
 from muvi.datasets.builders.base_dataset_builder import load_dataset_config
 from muvi.datasets.builders.audio_text_pair_builder import (
-    MusicCapsBuilder, MusicQABuilder
+    MusicCapsBuilder, MusicQABuilder, MSDBuilder
 )
 from muvi.common.registry import registry
 
 __all__ = [
     "MusicCapsBuilder",
-    "MusicQABuilder"
+    "MusicQABuilder",
+    "MSDBuilder"
 ]
 
 
