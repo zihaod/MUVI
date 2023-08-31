@@ -8,6 +8,7 @@ from muvi.common.registry import registry
 from muvi.datasets.builders.base_dataset_builder import BaseDatasetBuilder
 from muvi.datasets.datasets.musiccaps_dataset import MusicCapsDataset
 from muvi.datasets.datasets.musicqa_dataset import MusicQADataset
+from muvi.datasets.datasets.msd_dataset import MSDDataset
 
 
 @registry.register_builder("musiccaps")
@@ -83,5 +84,42 @@ class MusicQABuilder(BaseDatasetBuilder):
             data_dir=self.config.data_dir, 
         )
  
+
+        return datasets
+
+@registry.register_builder("msd")
+class MSDBuilder(BaseDatasetBuilder):
+    train_dataset_cls = MSDDataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "configs/datasets/msd/default.yaml",
+    }
+
+    def build_datasets(self):
+        # at this point, all the annotations and image/videos should be all downloaded to the specified locations.
+        logging.info("Building datasets...")
+        #self.build_processors()
+
+        #build_info = self.config.build_info
+        #storage_path = build_info.storage
+
+        datasets = dict()
+
+        #if not os.path.exists(storage_path):
+        #    warnings.warn("storage path {} does not exist.".format(storage_path))
+
+        #get processor
+        processor = Wav2Vec2FeatureExtractor.from_pretrained(self.config.processor, trust_remote_code=True)
+
+
+        # create datasets
+        dataset_cls = self.train_dataset_cls
+
+        datasets['train'] = dataset_cls(
+            processor=processor,
+            split=self.config.split,
+            mp3_file_folder=self.config.data_dir,
+        )
+
 
         return datasets
