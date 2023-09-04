@@ -2,4 +2,4 @@ datasets:
   msd:
     processor: 'm-a-p/MERT-v1-330M'
     split: 'train'
-    data_dir: "/ihome/nyoungblood/vis77/storage/yudong/datasets/LP_MusicCaps_MSD/work/yudongl/MSD"
+    data_dir: "/jmain02/home/J2AD007/txk47/yxm46-txk47/dataset/pretrain/MSD"
