@@ -1,8 +1,9 @@
 model:
   arch: muvi
   model_type: pretrain_vicuna
-  mert_model: 'm-a-p/MERT-v1-330M'
-  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
+  mert_model: '/bask/projects/v/vjgo8416-sel-sup-aud/MUVI/model/MERT-v1-330M'
+  # llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
+  llama_model: '/bask/projects/v/vjgo8416-sel-sup-aud/MUVI/model/7B_vicuna'
   ckpt: '/content/checkpoint_3.pth'
   prompt_template: '###Human: {} ###Assistant: '
   end_sym: "###"

@@ -2,10 +2,10 @@ model:
   arch: muvi
 
   # audio encoder
-  mert_model: 'm-a-p/MERT-v1-330M'
+  mert_model: '/bask/projects/v/vjgo8416-sel-sup-aud/MUVI/model/MERT-v1-330M'
 
   # Vicuna
-  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/7B_vicuna'
+  llama_model: '/bask/projects/v/vjgo8416-sel-sup-aud/MUVI/model/7B_vicuna'
 
   # generation configs
   prompt: ""
