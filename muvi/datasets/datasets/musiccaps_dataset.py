@@ -40,7 +40,7 @@ class MusicCapsDataset(BaseDataset):
 
         is_eval = self.ann[idx]['is_audioset_eval']
 
-        return {'audio': audio, 'text_input': txt, 'is_eval': is_eval}
+        return {'audio': audio, 'text_input': txt, 'is_eval': is_eval, 'ytid': ytid}
 
     def collater(self, samples):
         #padding to max length in a batch
