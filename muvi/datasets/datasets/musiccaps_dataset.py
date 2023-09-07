@@ -38,7 +38,9 @@ class MusicCapsDataset(BaseDataset):
                                return_tensors="pt")['input_values'][0]
         txt = [self.ann[idx]['caption']]
 
-        return {'audio': audio, 'text_input': txt}
+        is_eval = self.ann[idx]['is_audioset_eval']
+
+        return {'audio': audio, 'text_input': txt, 'is_eval': is_eval}
 
     def collater(self, samples):
         #padding to max length in a batch
