@@ -11,7 +11,8 @@ model:
 datasets:
   cmi:
     data_type: audios
-
+  musicqa:
+    data_type: audios
 
 
 run:
