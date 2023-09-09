@@ -17,7 +17,7 @@ class MusicCapsDataset(BaseDataset):
         self.resample_rate = processor.sampling_rate
         self.processor = processor
         
-        with open(os.path.join(data_dir, 'MusicCaps_ann', f'{split}.json'), 'r') as f:
+        with open(os.path.join(data_dir, 'MusicCaps_ann', 'all.json'), 'r') as f:
             self.ann = json.load(f)
         self.ann = self.ann['ann']
 
@@ -26,7 +26,7 @@ class MusicCapsDataset(BaseDataset):
 
     def __getitem__(self, idx):
         ytid = self.ann[idx]['ytid']
-        sampling_rate = self.ann[idx]['audio']['sampling_rate']
+        sampling_rate = self.ann[idx]['sampling_rate']
         npy_path = os.path.join(self.data_dir, 'MusicCaps_audio', f'{ytid}.npy')
         raw_audio = np.load(npy_path)
         
