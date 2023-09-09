@@ -23,15 +23,16 @@ run:
   warmup_lr: 1e-6
 
   weight_decay: 0.05
-  max_epoch: 5
-  batch_size_train: 8 #64
-  batch_size_eval: 8 #64
+  max_epoch: 6
+  batch_size_train: 2
+  batch_size_eval: 2
   num_workers: 4
-  warmup_steps: 500
-  iters_per_epoch: 500
+  warmup_steps: 5000
+  iters_per_epoch: 5000
+  accum_grad_iters: 16
 
   seed: 42
-  output_dir: "./outputs"
+  output_dir: "/content/drive/MyDrive/model_weights/muvi/stage2"
 
   amp: True
   resume_ckpt_path: null
