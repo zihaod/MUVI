@@ -2,7 +2,7 @@ model:
   arch: muvi
   model_type: pretrain_vicuna
   prompt_template: '###Human: {} ###Assistant: '
-  ckpt: '/content/checkpoint_3.pth'
+  ckpt: '/content/pretrain_checkpoint_10.pth'
   max_txt_len: 160
   end_sym: "###"
 
@@ -10,6 +10,8 @@ model:
 
 datasets:
   musicqa:
+    data_type: audios
+  cmi:
     data_type: audios
 
 
