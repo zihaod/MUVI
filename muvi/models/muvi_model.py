@@ -172,7 +172,7 @@ class MUVI(BaseModel):
         attn = samples["attention_mask"] if "attention_mask" in samples else None
         audio_embeds, atts_audio = self.encode_audio(audio, attn)
         if 'instruction_input' in samples:  # instruction dataset
-            print('Instruction Batch')
+            #print('Instruction Batch')
             instruction_prompt = []
             for instruction in samples['instruction_input']:
                 prompt = '<Audio><AudioHere></Audio> ' + instruction
