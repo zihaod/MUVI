@@ -81,6 +81,7 @@ class CMIBuilder(BaseDatasetBuilder):
             processor=processor,
             split=self.config.split, 
             data_dir=self.config.data_dir, 
+            question_type=self.config.question_type
         )
  
 
