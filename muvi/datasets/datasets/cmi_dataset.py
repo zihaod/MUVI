@@ -10,17 +10,24 @@ import json
 import torchaudio.transforms as T
 
 class CMIDataset(BaseDataset):
-    def __init__(self, processor, data_dir, split):
+    def __init__(self, processor, data_dir, split, question_type='all'):
         super().__init__()
         self.split = split # train or test
         self.data_dir = data_dir #music_data
         self.resample_rate = processor.sampling_rate
         self.processor = processor
+
+        ann_path = os.path.join(data_dir, 'MusicInstruct/music_instruct.json')
+        if question_type == 'short':
+            ann_path = os.path.join(data_dir, 'MusicInstruct/music_instruct_short.json')
+        elif question_type == 'long':
+            ann_path = os.path.join(data_dir, 'MusicInstruct/music_instruct_long.json')
         
-        with open(os.path.join(data_dir, 'MusicInstruct/music_instruct.json'), 'r') as f:
+        with open(ann_path, 'r') as f:
             self.all_ann = json.load(f)
         self.all_ann = self.all_ann['QA']
-      
+        
+        # train/test split
         self.ann = []
         is_eval = self.split == 'test'
         for item in self.all_ann:
