@@ -149,8 +149,8 @@ class MusicQADataset(BaseDataset):
                 is_mono=True,
                 is_normalize=False,
                 # crop_to_length_in_sec=31,
-                #crop_to_length_in_sample_points=int(30.5*RESAMPLE_RATE),
-                #crop_randomly=True, 
+                crop_to_length_in_sample_points=int(15.5*RESAMPLE_RATE),
+                crop_randomly=True, 
                 pad=True,
             )
             audio = audio.squeeze(0)
