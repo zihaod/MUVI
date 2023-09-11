@@ -142,22 +142,27 @@ class MusicQADataset(BaseDataset):
         id = self.ann[idx]['audio_name']
         filename_path = os.path.join(self.data_dir, 'MusicQA', 'audios', f'{id}.wav')
 
-        audio = load_audio(
-            filename_path,
-            target_sr=RESAMPLE_RATE,
-            is_mono=True,
-            is_normalize=False,
-            # crop_to_length_in_sec=31,
-            crop_to_length_in_sample_points=int(30.5*RESAMPLE_RATE),
-            crop_randomly=True, 
-            pad=True,
-        )
-        audio = audio.squeeze(0)
+        try:
+            audio = load_audio(
+                filename_path,
+                target_sr=RESAMPLE_RATE,
+                is_mono=True,
+                is_normalize=False,
+                # crop_to_length_in_sec=31,
+                crop_to_length_in_sample_points=int(30.5*RESAMPLE_RATE),
+                crop_randomly=True, 
+                pad=True,
+            )
+            audio = audio.squeeze(0)
+    
+            instruction = [self.ann[idx]['conversation'][0]['value']]
+            txt = [self.ann[idx]['conversation'][1]['value']]
+            
+            return {'audio': audio, 'text_input': txt, 'instruction_input': instruction}
 
-        instruction = [self.ann[idx]['conversation'][0]['value']]
-        txt = [self.ann[idx]['conversation'][1]['value']]
-        
-        return {'audio': audio, 'text_input': txt, 'instruction_input': instruction}
+        except Exception as e:
+            print(f"skip audio {id} because of {e}")
+            return self.__getitem__(0)
 
     def collater(self, samples):
         #padding to max length in a batch
