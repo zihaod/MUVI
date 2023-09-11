@@ -1,5 +1,5 @@
 datasets:
   musicqa:
     processor: 'm-a-p/MERT-v1-330M'
-    split: musiccaps_pretraining
+    split: Finetune
     data_dir: '/content/drive/MyDrive/music_data/'
