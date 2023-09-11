@@ -162,7 +162,7 @@ class MusicQADataset(BaseDataset):
 
         except Exception as e:
             print(f"skip audio {data_path} because of {e}")
-            return self.__getitem__(0)
+            return self.__getitem__(10)
 
     def collater(self, samples):
         #padding to max length in a batch
