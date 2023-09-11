@@ -139,8 +139,8 @@ class MusicQADataset(BaseDataset):
         return len(self.ann)
 
     def __getitem__(self, idx):
-        id = self.ann[idx]['audio_name']
-        filename_path = os.path.join(self.data_dir, 'MusicQA', 'audios', f'{id}.wav')
+        data_path = self.ann[idx]['audio_name']
+        filename_path = os.path.join(self.data_dir, 'MusicQA', 'audios', f'{data_path}')
 
         try:
             audio = load_audio(
@@ -149,8 +149,8 @@ class MusicQADataset(BaseDataset):
                 is_mono=True,
                 is_normalize=False,
                 # crop_to_length_in_sec=31,
-                crop_to_length_in_sample_points=int(30.5*RESAMPLE_RATE),
-                crop_randomly=True, 
+                #crop_to_length_in_sample_points=int(30.5*RESAMPLE_RATE),
+                #crop_randomly=True, 
                 pad=True,
             )
             audio = audio.squeeze(0)
@@ -161,7 +161,7 @@ class MusicQADataset(BaseDataset):
             return {'audio': audio, 'text_input': txt, 'instruction_input': instruction}
 
         except Exception as e:
-            print(f"skip audio {id} because of {e}")
+            print(f"skip audio {data_path} because of {e}")
             return self.__getitem__(0)
 
     def collater(self, samples):
