@@ -45,8 +45,9 @@ class MusicCapsDataset(BaseDataset):
                                sampling_rate=self.resample_rate, 
                                return_tensors="pt")['input_values'][0]
         txt = [self.ann[idx]['caption']]
+        instruction = ['Please give a caption to the music.']
 
-        return {'audio': audio, 'text_input': txt, 'ytid': ytid}
+        return {'audio': audio, 'text_input': txt, 'instruction_input': instruction,  'ytid': ytid}
 
     
     def collater(self, samples):
@@ -55,6 +56,7 @@ class MusicCapsDataset(BaseDataset):
         audio_sizes = [len(s['audio']) for s in samples]
         audio_size = max(audio_sizes)
         txts = [" ".join(s['text_input']) for s in samples]
+        instructions = [" ".join(s['instruction_input']) for s in samples]
 
         collated_audios = audios[0].new_zeros(len(audios), audio_size)
         attn_mask = (
@@ -71,7 +73,7 @@ class MusicCapsDataset(BaseDataset):
 
         attn_mask = attn_mask.int()
 
-        return {'audio': collated_audios, 'text_input': txts, 'attention_mask': attn_mask}
+        return {'audio': collated_audios, 'text_input': txts, 'instruction_input': instructions, 'attention_mask': attn_mask}
 
 class MusicCapsDatasetWithExtract(BaseDataset):
     def __init__(self, processor, data_dir, split):
@@ -142,5 +144,7 @@ class MusicCapsDatasetWithExtract(BaseDataset):
         attn_mask = attn_mask.int()
 
         return {'audio': collated_audios, 'text_input': txts, 'attention_mask': attn_mask}
+
+    
 
     
