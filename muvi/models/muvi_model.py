@@ -166,7 +166,7 @@ class MUVI(BaseModel):
         else:
             return audio_embeds, atts_audio
 
-    def generation_instruction_prompt_wrap(self, audio_embeds, atts_audio prompt):
+    def generation_instruction_prompt_wrap(self, audio_embeds, atts_audio, prompt):
         if prompt:
             batch_size = audio_embeds.shape[0]
             p_befores = []
