@@ -12,14 +12,22 @@ import torchaudio.transforms as T
 class MusicCapsDataset(BaseDataset):
     def __init__(self, processor, data_dir, split):
         super().__init__()
-        self.split = split
-        self.data_dir = data_dir #music_data
+        self.split = split # train/test
+        self.data_dir = data_dir # music_data
         self.resample_rate = processor.sampling_rate
         self.processor = processor
         
-        with open(os.path.join(data_dir, 'MusicCaps_ann', 'all.json'), 'r') as f:
-            self.ann = json.load(f)
-        self.ann = self.ann['ann']
+        ann_path = os.path.join(data_dir, 'MusicCaps_ann', 'all.json')
+        with open(ann_path, 'r') as f:
+            self.all_ann = json.load(f)
+        self.all_ann = self.all_ann['ann']
+        
+        # train/test split
+        self.ann = []
+        is_eval = self.split == 'test'
+        for item in self.all_ann:
+            if item['is_audioset_eval'] == is_eval:
+                self.ann.append(item)
 
     def __len__(self):
         return len(self.ann)
@@ -38,10 +46,9 @@ class MusicCapsDataset(BaseDataset):
                                return_tensors="pt")['input_values'][0]
         txt = [self.ann[idx]['caption']]
 
-        is_eval = self.ann[idx]['is_audioset_eval']
+        return {'audio': audio, 'text_input': txt, 'ytid': ytid}
 
-        return {'audio': audio, 'text_input': txt, 'is_eval': is_eval, 'ytid': ytid}
-
+    
     def collater(self, samples):
         #padding to max length in a batch
         audios = [s['audio'] for s in samples]
