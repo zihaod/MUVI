@@ -165,7 +165,50 @@ class MUVI(BaseModel):
             return wrapped_audio_embeds, wrapped_atts_audio
         else:
             return audio_embeds, atts_audio
-        
+
+    def generation_instruction_prompt_wrap(self, audio_embeds, prompt):
+        if prompt:
+            batch_size = audio_embeds.shape[0]
+            p_befores = []
+            p_afters = []
+    
+            wrapped_audio_embeds = []
+            
+            for i in range(batch_size):
+                p_b, p_a = prompt[i].split('<AudioHere>')
+                p_befores.append(p_b)
+                p_afters.append(p_a)
+            
+            for i in range(batch_size):
+                p_before = p_befores[i]
+                p_after = p_afters[i]
+                p_before_tokens = self.llama_tokenizer(p_before, return_tensors="pt", add_special_tokens=False).to(audio_embeds.device)
+                p_after_tokens = self.llama_tokenizer(p_after, return_tensors="pt", add_special_tokens=False).to(audio_embeds.device)
+                p_before_embeds = self.llama_model.model.embed_tokens(p_before_tokens.input_ids).squeeze(0)
+                p_after_embeds = self.llama_model.model.embed_tokens(p_after_tokens.input_ids).squeeze(0)
+                #print(p_before_embeds.shape, p_after_embeds.shape, audio_embeds[i].shape)
+                wrapped_audio_embed = torch.cat([p_before_embeds, audio_embeds[i], p_after_embeds], dim=0) # 2D tensor
+                wrapped_audio_embeds.append(wrapped_audio_embed)
+         
+    
+           
+            max_len = max([embed.shape[0] for embed in wrapped_audio_embeds])
+            padded_audio_embeds = []
+    
+            for embed in wrapped_audio_embeds:
+                pad_len = max_len - embed.shape[0]
+                pad_embed = self.llama_model.model.embed_tokens(2 * torch.ones(pad_len).to(torch.int64).to(audio_embeds.device))
+                #print(pad_embed.shape, embed.shape)
+                #print(torch.cat([pad_embed, embed], dim=0).shape)
+    
+                padded_audio_embeds.append(torch.cat([pad_embed, embed], dim=0))
+    
+            padded_audio_embeds = torch.stack(padded_audio_embeds)
+            #print(padded_audio_embeds.shape)
+    
+            return padded_audio_embeds#, wrapped_attns
+        else:
+            return audio_embeds#, atts_audio
 
     def forward(self, samples):
         audio = samples["audio"]
