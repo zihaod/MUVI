@@ -188,8 +188,15 @@ class MUVI(BaseModel):
                 p_before_embeds = self.llama_model.model.embed_tokens(p_before_tokens.input_ids).squeeze(0)
                 p_after_embeds = self.llama_model.model.embed_tokens(p_after_tokens.input_ids).squeeze(0)
                 #print(p_before_embeds.shape, p_after_embeds.shape, audio_embeds[i].shape)
-                wrapped_audio_embed = torch.cat([p_before_embeds, audio_embeds[i], p_after_embeds], dim=0) # 2D tensor
-                wrapped_atts_audio = torch.cat([p_before_tokens.attention_mask.squeeze(0), atts_audio[i], p_after_tokens.attention_mask.squeeze(0)], dim=0)
+                bos = torch.ones([1, 1], dtype=torch.int64, device=audio_embeds.device) * self.llama_tokenizer.bos_token_id
+                bos_embed = self.llama_model.model.embed_tokens(bos).squeeze(0)
+                atts_bos = torch.ones(1).to(torch.int64).to(audio_embeds.device)
+                
+                wrapped_audio_embed = torch.cat([bos_embed,p_before_embeds, audio_embeds[i], p_after_embeds], dim=0) # 2D tensor
+                wrapped_atts_audio = torch.cat([atts_bos,
+                                                p_before_tokens.attention_mask.squeeze(0), 
+                                                atts_audio[i], 
+                                                p_after_tokens.attention_mask.squeeze(0)], dim=0)
 
                 wrapped_atts_audios.append(wrapped_atts_audio)
                 wrapped_audio_embeds.append(wrapped_audio_embed)
