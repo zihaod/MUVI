@@ -21,6 +21,7 @@ class MUVI(BaseModel):
 
     PRETRAINED_MODEL_CONFIG_DICT = {
         "pretrain_vicuna": "configs/models/muvi.yaml",
+        "pretrain_llama2": "configs/models/muvi_llama2.yaml"
     }
 
     def __init__(
