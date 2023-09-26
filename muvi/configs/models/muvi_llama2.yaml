@@ -5,7 +5,7 @@ model:
   mert_model: 'm-a-p/MERT-v1-330M'
 
   # Vicuna
-  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/llama-2-7B-chat'
+  llama_model: '/content/drive/MyDrive/model_weights/llama_weights_new/llama-2-7b-chat'
 
   # generation configs
   prompt: ""
