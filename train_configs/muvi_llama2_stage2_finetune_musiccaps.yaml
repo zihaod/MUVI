@@ -32,7 +32,7 @@ run:
   accum_grad_iters: 8
 
   seed: 42
-  output_dir: "/content/drive/MyDrive/model_weights/muvi/stage2/llama2_7B/MusicQA/"
+  output_dir: "/content/drive/MyDrive/model_weights/muvi/stage2/llama2_7B/MusicCaps/"
 
   amp: True
   resume_ckpt_path: null
