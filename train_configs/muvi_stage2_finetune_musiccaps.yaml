@@ -2,7 +2,7 @@ model:
   arch: muvi
   model_type: pretrain_vicuna
   prompt_template: '###Human: {} ###Assistant: '
-  ckpt: '/content/drive/MyDrive/model_weights/muvi/stage1/pretrain_checkpoint_len_15_epoch_10.pth'
+  ckpt: '/content/drive/MyDrive/model_weights/muvi/stage2/vicuna_7B/MusicCaps/20230923041/checkpoint_5.pth'
   max_txt_len: 160
   end_sym: "###"
 
